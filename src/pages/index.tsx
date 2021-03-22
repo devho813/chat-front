@@ -1,6 +1,13 @@
 import styled from '@emotion/styled'
-import React from 'react'
+import React, { useEffect } from 'react'
+// import client from '../lib/socket';
+
 function Home() {
+
+  useEffect(() => {
+    // client
+  }, [])
+
   return (
     <HomeContainer>
       <MessageList>
@@ -29,8 +36,11 @@ export default Home
 
 const HomeContainer = styled.div`
   position: relative;
-  width: 100%;
+  margin: 0 auto;
+  max-width: 414px;
   height: 100%;
+  border: 10px solid #1abc9c;
+  border-radius: 15px 15px 0 0;
 `
 
 const MessageList = styled.ul`
@@ -40,6 +50,10 @@ const MessageList = styled.ul`
 
   & > li {
     margin-bottom: 10px;
+  }
+
+  & > li:nth-child(2n) {
+    color: gray;
   }
 `
 
@@ -52,7 +66,9 @@ const Form = styled.form`
   input {
     width: 100%;
     height: 5vh;
-    border: 1px solid black;
+    border: none;
+    border-top: 10px solid #1abc9c;
+    border-radius: 0 0 15px 15px;
     padding: 10px;
     outline: none;
   }
@@ -61,8 +77,9 @@ const Form = styled.form`
     position: absolute;
     display: inline-block;
     right: 0;
+    top: 1px;
     height: 100%;
-    min-width: 20%;
+    min-width: 25%;
     border: none;
     outline: none;
     background-color: #1abc9c;
