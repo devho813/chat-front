@@ -1,11 +1,42 @@
 import styled from '@emotion/styled'
-import React, { useEffect } from 'react'
-// import client from '../lib/socket';
+import { IMessage } from '@stomp/stompjs'
+import React, { useCallback, useEffect, useState } from 'react'
+import webSocketClient from '../lib/socket'
 
 function Home() {
-
+  const [message, setMessage] = useState('')
   useEffect(() => {
-    // client
+    webSocketClient.activate()
+    const subscription = webSocketClient.subscribe('/queue/test', subscriptionMessage)
+
+    return () => {
+      subscription.unsubscribe()
+      webSocketClient.deactivate()
+    }
+  }, [])
+
+  const onChangeMessage = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value)
+  }, [])
+
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      publishMessage(message)
+    },
+    [message]
+  )
+
+  const publishMessage = useCallback((message: string) => {
+    webSocketClient.publish({
+      destination: '/topic/general',
+      body: message,
+      headers: { 'content-type': 'text' },
+    })
+  }, [])
+
+  const subscriptionMessage = useCallback((message: IMessage) => {
+    console.log(message)
   }, [])
 
   return (
@@ -24,8 +55,8 @@ function Home() {
           <span>손님_5aswws</span>: <span>안녕하세요?</span>
         </li>
       </MessageList>
-      <Form>
-        <input type="text" />
+      <Form onSubmit={onSubmit}>
+        <input type="text" onChange={onChangeMessage} value={message} />
         <button>전송</button>
       </Form>
     </HomeContainer>

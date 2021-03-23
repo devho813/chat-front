@@ -1,7 +1,7 @@
-import SockJS from 'sockjs-client'
-import StompJs from '@stomp/stompjs'
+import { Client } from '@stomp/stompjs'
+// import SockJS from 'sockjs-client'
 
-const client = new StompJs.Client({
+const client = new Client({
   brokerURL: '/api/ws',
   connectHeaders: {
     login: 'user',
@@ -14,5 +14,14 @@ const client = new StompJs.Client({
   heartbeatIncoming: 4000,
   heartbeatOutgoing: 4000,
 })
+
+client.onConnect = function () {
+  console.log('connect!')
+}
+
+client.onStompError = function (frame) {
+  console.log('Broker reported error: ' + frame.headers['message'])
+  console.log('Additional details: ' + frame.body)
+}
 
 export default client
