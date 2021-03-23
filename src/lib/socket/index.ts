@@ -1,5 +1,4 @@
 import { Client } from '@stomp/stompjs'
-// import SockJS from 'sockjs-client'
 
 const client = new Client({
   brokerURL: '/api/ws',
