@@ -1,13 +1,17 @@
 import styled from '@emotion/styled'
 import { IMessage } from '@stomp/stompjs'
 import React, { useCallback, useEffect, useState } from 'react'
+import { useRecoilState } from 'recoil'
 import webSocketClient from '../lib/socket'
+import messageAtom from '../recoil/message/atom'
 
 function Home() {
   const [message, setMessage] = useState('')
+  const [messages, setMessages] = useRecoilState(messageAtom)
+
   useEffect(() => {
     webSocketClient.activate()
-    const subscription = webSocketClient.subscribe('/queue/test', subscriptionMessage)
+    const subscription = webSocketClient.subscribe('/sub/chat', subscriptionMessage)
 
     return () => {
       subscription.unsubscribe()
@@ -28,32 +32,30 @@ function Home() {
   )
 
   const publishMessage = useCallback((message: string) => {
+    if (!webSocketClient.connected) {
+      return
+    }
+
     webSocketClient.publish({
-      destination: '/topic/general',
-      body: message,
-      headers: { 'content-type': 'text' },
+      destination: '/pub/chat',
+      body: JSON.stringify({ message }),
     })
+
+    setMessage('')
   }, [])
 
-  const subscriptionMessage = useCallback((message: IMessage) => {
-    console.log(message)
+  const subscriptionMessage = useCallback(({ body }: IMessage) => {
+    setMessages((_chatMessages) => [..._chatMessages, JSON.parse(body)])
   }, [])
 
   return (
     <HomeContainer>
       <MessageList>
-        <li>
-          <span>손님_1sfkwd</span>: <span>안녕하세요?</span>
-        </li>
-        <li>
-          <span>손님_1odowk</span>: <span>네 안녕하세요?</span>
-        </li>
-        <li>
-          <span>손님_3ff0bz</span>: <span>안녕하세요?</span>
-        </li>
-        <li>
-          <span>손님_5aswws</span>: <span>안녕하세요?</span>
-        </li>
+        {messages.map((msg) => (
+          <li>
+            <span>{msg.sender}</span>: <span>{msg.message}</span>
+          </li>
+        ))}
       </MessageList>
       <Form onSubmit={onSubmit}>
         <input type="text" onChange={onChangeMessage} value={message} />

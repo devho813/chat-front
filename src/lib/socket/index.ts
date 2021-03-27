@@ -3,8 +3,8 @@ import { Client } from '@stomp/stompjs'
 const client = new Client({
   brokerURL: '/api/ws',
   connectHeaders: {
-    login: 'user',
-    passcode: 'password',
+    // TODO: 환경 변수 처리
+    'auth-chat': 'asdasdasgtqraslkdmalvkle132415tlasd.asd41',
   },
   debug: function (str: string) {
     console.log(str)

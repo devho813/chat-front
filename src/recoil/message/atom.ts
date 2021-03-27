@@ -1,11 +1,13 @@
 import { atom } from 'recoil'
 
-const messageAtom = atom({
+interface Message {
+  sender: string
+  message: string
+}
+
+const messageAtom = atom<Message[]>({
   key: 'messageAtom',
-  default: {
-    name: 'message',
-    value: [],
-  },
+  default: [],
 })
 
 export default messageAtom
