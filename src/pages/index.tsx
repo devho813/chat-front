@@ -11,10 +11,10 @@ function Home() {
 
   useEffect(() => {
     webSocketClient.activate()
-    const subscription = webSocketClient.subscribe('/sub/chat', subscriptionMessage)
+    // const subscription = webSocketClient.subscribe('/sub/chat', subscriptionMessage)
 
     return () => {
-      subscription.unsubscribe()
+      // subscription.unsubscribe()
       webSocketClient.deactivate()
     }
   }, [])

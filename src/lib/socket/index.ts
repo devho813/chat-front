@@ -1,15 +1,14 @@
-import { Client } from '@stomp/stompjs'
+import { Client, IFrame } from '@stomp/stompjs'
 
 const client = new Client({
-  brokerURL: '/api/ws',
+  brokerURL: `${process.env.NEXT_PUBLIC_API_URL}/api/ws`,
   connectHeaders: {
-    // TODO: 환경 변수 처리
-    'auth-chat': 'asdasdasgtqraslkdmalvkle132415tlasd.asd41',
+    'auth-chat': `${process.env.NEXT_PUBLIC_AUTH_CHAT}`,
   },
   debug: function (str: string) {
-    console.log(str)
+    console.warn(str)
   },
-  reconnectDelay: 5000, //자동 재 연결
+  reconnectDelay: undefined,
   heartbeatIncoming: 4000,
   heartbeatOutgoing: 4000,
 })
@@ -18,9 +17,9 @@ client.onConnect = function () {
   console.log('connect!')
 }
 
-client.onStompError = function (frame) {
-  console.log('Broker reported error: ' + frame.headers['message'])
-  console.log('Additional details: ' + frame.body)
+client.onStompError = function (frame: IFrame) {
+  console.error('Broker reported error: ' + frame.headers['message'])
+  console.error('Additional details: ' + frame.body)
 }
 
 export default client
